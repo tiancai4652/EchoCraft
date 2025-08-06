@@ -1,158 +1,157 @@
-# 语音转文字工具 (Voice-to-Text Tool)
+# EchoCraft 
 
-一个基于Web的语音转文字工具，支持实时语音识别和AI智能润色功能。
+A web-based voice-to-text tool that supports real-time speech recognition and AI-powered text enhancement.
 
-## ✨ 主要功能
+## ✨ Key Features
 
-### 🎤 语音录制与识别
-- **全局快捷键支持**：默认F9开始/结束录音（可自定义）
-- **实时语音识别**：录音过程中实时显示识别的文字
-- **浏览器兼容**：支持Chrome、Edge、Safari等现代浏览器
-- **视觉反馈**：录音时有红色边框和动画效果
+### 🎤 Voice Recording & Recognition
+- **Global Hotkey Support**: Default F9 to start/stop recording (customizable)
+- **Real-time Speech Recognition**: Text appears as you speak
+- **Browser Compatibility**: Works with Chrome, Edge, Safari and other modern browsers
+- **Visual Feedback**: Red border and animation effects during recording
 
-### 🤖 AI智能润色
-- **多场景支持**：
-  - 通用润色：去除口语化，使表达更正式流畅
-  - 产品需求：整理成规范的产品需求文档
-  - 代码设计：整理成清晰的技术设计文档
-  - 工作汇报：整理成正式的工作汇报格式
-  - 计划制定：整理成结构化的计划文档
-- **自定义场景**：可以添加和编辑自己的润色场景
+### 🤖 AI Text Enhancement
+- **Multiple Scenarios**:
+  - General Enhancement: Removes conversational elements for more formal, fluid expression
+  - Product Requirements: Formats text as standardized product requirement documents
+  - Code Design: Structures text as clear technical design documentation
+  - Work Reports: Formats text as formal work reports
+  - Planning: Organizes text into structured planning documents
+- **Custom Scenarios**: Add and edit your own enhancement scenarios
 
-### 🔧 设置管理
-- **快捷键自定义**：可以修改录音快捷键
-- **多AI模型支持**：OpenAI GPT、Claude、文心一言、通义千问
-- **API密钥配置**：安全存储各个AI服务的API密钥
-- **场景管理**：添加、编辑、删除润色场景
+### 🔧 Settings Management
+- **Customizable Hotkeys**: Modify recording shortcuts
+- **Multiple AI Models**: OpenAI GPT, Claude, Wenxin Yiyan, Tongyi Qianwen
+- **API Key Configuration**: Securely store API keys for various AI services
+- **Scenario Management**: Add, edit, and delete enhancement scenarios
 
-### 📋 结果展示
-- **对比显示**：原始文本和润色后文本并排显示
-- **一键复制**：快速复制原始文本或润色结果
-- **文件下载**：将润色结果保存为txt文件
-- **字符统计**：显示润色前后的字符数对比
+### 📋 Results Display
+- **Side-by-Side Comparison**: Original text and enhanced text displayed together
+- **One-Click Copy**: Quickly copy original or enhanced text
+- **File Download**: Save enhanced results as txt files
+- **Character Count**: Shows character count comparison before and after enhancement
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 环境要求
+### Requirements
 - Node.js 16+ 
-- 现代浏览器（Chrome、Edge、Safari等）
-- 麦克风权限
+- Modern browser (Chrome, Edge, Safari, etc.)
+- Microphone permissions
 
-### 安装依赖
+### Install Dependencies
 ```bash
 npm install
 ```
 
-### 启动开发服务器
+### Start Development Server
 ```bash
 npm run dev
 ```
 
-### 构建生产版本
+### Build Production Version
 ```bash
 npm run build
 ```
 
-## 📖 使用方法
+## 📖 How to Use
 
-1. **开始录音**：按F9或点击麦克风按钮
-2. **说话**：开始说话，文字会实时显示
-3. **结束录音**：再次按F9或点击停止按钮
-4. **AI润色**：系统自动将录音文字发送给AI进行润色
-5. **查看结果**：在右侧面板查看润色结果
-6. **复制使用**：一键复制润色后的文字到剪贴板
+1. **Start Recording**: Press F9 or click the microphone button
+2. **Speak**: Start talking, text will appear in real-time
+3. **End Recording**: Press F9 again or click the stop button
+4. **AI Enhancement**: System automatically sends the transcribed text to AI for enhancement
+5. **View Results**: Check the enhanced text in the right panel
+6. **Copy and Use**: Copy the enhanced text to clipboard with one click
 
-## ⚙️ 配置说明
+## ⚙️ Configuration
 
-### API密钥配置
-在设置面板中配置各AI服务的API密钥：
-- OpenAI GPT：需要OpenAI API密钥
-- Claude：需要Anthropic API密钥
-- 文心一言：需要百度API密钥
-- 通义千问：需要阿里云API密钥
+### API Key Setup
+Configure API keys for various AI services in the settings panel:
+- OpenAI GPT: Requires OpenAI API key
+- Claude: Requires Anthropic API key
+- Wenxin Yiyan: Requires Baidu API key
+- Tongyi Qianwen: Requires Alibaba Cloud API key
 
-### 自定义场景
-可以在设置中添加自定义润色场景：
-1. 点击"添加场景"按钮
-2. 输入场景名称
-3. 编写润色提示词
-4. 保存设置
+### Custom Scenarios
+Add custom enhancement scenarios in settings:
+1. Click "Add Scenario" button
+2. Enter scenario name
+3. Write enhancement prompt
+4. Save settings
 
-## 🛠️ 技术栈
+## 🛠️ Technology Stack
 
-- **前端框架**：React 18 + TypeScript
-- **UI组件库**：shadcn/ui
-- **样式框架**：Tailwind CSS
-- **构建工具**：Vite
-- **语音识别**：Web Speech API
-- **状态管理**：React Hooks
+- **Frontend Framework**: React 18 + TypeScript
+- **UI Component Library**: shadcn/ui
+- **Styling Framework**: Tailwind CSS
+- **Build Tool**: Vite
+- **Speech Recognition**: Web Speech API
+- **State Management**: React Hooks
 
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ui/                 # shadcn/ui组件
-│   ├── voice-recorder.tsx  # 语音录制组件
-│   ├── settings-panel.tsx  # 设置面板组件
-│   ├── result-panel.tsx    # 结果展示组件
-│   └── theme-provider.tsx  # 主题提供者
-├── hooks/                  # 自定义Hooks
-├── lib/                    # 工具函数
-├── App.tsx                 # 主应用组件
-└── main.tsx               # 应用入口
-
+│   ├── ui/                 # shadcn/ui components
+│   ├── voice-recorder.tsx  # Voice recording component
+│   ├── settings-panel.tsx  # Settings panel component
+│   ├── result-panel.tsx    # Results display component
+│   └── theme-provider.tsx  # Theme provider
+├── hooks/                  # Custom Hooks
+├── lib/                    # Utility functions
+├── App.tsx                 # Main application component
+└── main.tsx               # Application entry point
 ```
 
-## 🌟 特性说明
+## 🌟 Feature Details
 
-### 响应式设计
-- 支持桌面和移动设备
-- 自适应布局，在不同屏幕尺寸下都有良好体验
+### Responsive Design
+- Supports desktop and mobile devices
+- Adaptive layout for good experience across different screen sizes
 
-### 无障碍支持
-- 键盘导航支持
-- 屏幕阅读器友好
-- 高对比度支持
+### Accessibility Support
+- Keyboard navigation support
+- Screen reader friendly
+- High contrast support
 
-### 数据安全
-- API密钥本地存储
-- 不上传敏感信息
-- 支持离线语音识别
+### Data Security
+- API keys stored locally
+- No sensitive information uploaded
+- Supports offline speech recognition
 
-## 🔧 开发说明
+## 🔧 Development Notes
 
-### 添加新的AI模型
-1. 在`App.tsx`中的`defaultSettings.models`数组中添加新模型
-2. 在润色逻辑中添加对应的API调用
-3. 更新设置面板的模型选择
+### Adding New AI Models
+1. Add new model to `defaultSettings.models` array in `App.tsx`
+2. Add corresponding API call in enhancement logic
+3. Update model selection in settings panel
 
-### 自定义UI主题
-- 修改`tailwind.config.ts`中的主题配置
-- 更新`globals.css`中的CSS变量
-- 使用shadcn/ui的主题系统
+### Customizing UI Theme
+- Modify theme configuration in `tailwind.config.ts`
+- Update CSS variables in `globals.css`
+- Use shadcn/ui theme system
 
-## 📝 更新日志
+## 📝 Changelog
 
 ### v1.0.0 (2024-12-19)
-- ✨ 初始版本发布
-- 🎤 语音录制和实时识别功能
-- 🤖 AI润色功能
-- ⚙️ 设置管理功能
-- 📋 结果展示和导出功能
+- ✨ Initial release
+- 🎤 Voice recording and real-time recognition
+- 🤖 AI enhancement functionality
+- ⚙️ Settings management
+- 📋 Results display and export features
 
-## 📄 许可证
+## 📄 License
 
 MIT License
 
-## 🤝 贡献
+## 🤝 Contributions
 
-欢迎提交Issue和Pull Request来改进这个项目！
+Issues and Pull Requests are welcome to improve this project!
 
-## 📞 支持
+## 📞 Support
 
-如果您在使用过程中遇到问题，请：
-1. 查看README文档
-2. 检查浏览器控制台错误信息
-3. 确认麦克风权限已授予
-4. 提交Issue描述问题
+If you encounter issues while using this tool:
+1. Check the README documentation
+2. Check browser console for error messages
+3. Confirm microphone permissions are granted
+4. Submit an issue describing the problem
