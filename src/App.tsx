@@ -11,6 +11,7 @@ export interface AIModel {
   id: string;
   name: string;
   apiKey?: string;
+  // apiSecret?: string; // no longer needed for Wenxin (Qianfan Bearer)
 }
 
 export interface PolishScene {
@@ -80,17 +81,32 @@ function App() {
   const polishText = async (text: string) => {
     setIsPolishing(true);
     try {
-      // 这里应该调用实际的AI API
-      // 现在使用模拟的润色结果
-      const scene = settings.scenes.find(s => s.id === settings.selectedScene);
+      const scene = settings.scenes.find((s) => s.id === settings.selectedScene);
       const prompt = scene?.prompt || settings.scenes[0].prompt;
-      
-      // 模拟API调用延迟
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 模拟润色结果
-      const polished = simulatePolish(text);
-      setPolishedText(polished);
+
+      const selectedModel = settings.selectedModel;
+      const modelConfig = settings.models.find((m) => m.id === selectedModel);
+
+      if (!modelConfig?.apiKey) {
+        setPolishedText('未配置所选模型的 API 密钥，请在设置中填写。');
+        return;
+      }
+
+      let resultText = '';
+      if (selectedModel === 'openai') {
+        resultText = await callOpenAI(modelConfig.apiKey, prompt, text);
+      } else if (selectedModel === 'claude') {
+        resultText = await callClaude(modelConfig.apiKey, prompt, text);
+      } else if (selectedModel === 'tongyi') {
+        resultText = await callTongyi(modelConfig.apiKey, prompt, text);
+      } else if (selectedModel === 'wenxin') {
+        resultText = await callWenxin(modelConfig.apiKey, prompt, text);
+      } else {
+        console.warn(`模型 ${selectedModel} 暂未实现真实 API 调用，已回退到本地模拟。`);
+        resultText = simulatePolish(text);
+      }
+
+      setPolishedText(resultText);
     } catch (error) {
       console.error('润色失败:', error);
       setPolishedText('润色失败，请重试');
@@ -109,6 +125,152 @@ function App() {
       .replace(/这样子/g, '这样')
       .replace(/的话/g, '')
       .trim();
+  };
+
+  const callOpenAI = async (
+    apiKey: string,
+    prompt: string,
+    text: string
+  ): Promise<string> => {
+    const endpoint = (import.meta as any).env?.DEV
+      ? '/openai/v1/chat/completions'
+      : 'https://api.openai.com/v1/chat/completions';
+    const messages = [
+      { role: 'system', content: '你是一名中文文本润色助手。请在保留原意的前提下，使表达更加正式、通顺、结构化，并仅输出润色后的文本。' },
+      { role: 'user', content: `${prompt}\n\n${text}` },
+    ];
+    const body = {
+      model: 'gpt-4o-mini',
+      messages,
+      temperature: 0.3,
+    } as const;
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`OpenAI 调用失败: ${res.status} ${res.statusText} ${errText}`);
+    }
+    const data: any = await res.json();
+    const content: string | undefined = data?.choices?.[0]?.message?.content;
+    if (!content) throw new Error('OpenAI 返回内容为空');
+    return content.trim();
+  };
+
+  const callClaude = async (
+    apiKey: string,
+    prompt: string,
+    text: string
+  ): Promise<string> => {
+    const endpoint = (import.meta as any).env?.DEV
+      ? '/anthropic/v1/messages'
+      : 'https://api.anthropic.com/v1/messages';
+    const body = {
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 1024,
+      system: '你是一名中文文本润色助手。请在保留原意的前提下，使表达更加正式、通顺、结构化，并仅输出润色后的文本。',
+      messages: [
+        { role: 'user', content: `${prompt}\n\n${text}` },
+      ],
+    } as const;
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`Claude 调用失败: ${res.status} ${res.statusText} ${errText}`);
+    }
+    const data: any = await res.json();
+    const content: string | undefined = data?.content?.[0]?.text;
+    if (!content) throw new Error('Claude 返回内容为空');
+    return content.trim();
+  };
+
+  const callTongyi = async (
+    apiKey: string,
+    prompt: string,
+    text: string
+  ): Promise<string> => {
+    const endpoint = (import.meta as any).env?.DEV
+      ? '/dashscope/compatible-mode/v1/chat/completions'
+      : 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+    const messages = [
+      { role: 'system', content: '你是一名中文文本润色助手。请在保留原意的前提下，使表达更加正式、通顺、结构化，并仅输出润色后的文本。' },
+      { role: 'user', content: `${prompt}\n\n${text}` },
+    ];
+    const body = {
+      model: 'qwen-turbo',
+      messages,
+      temperature: 0.3,
+    } as const;
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`通义千问调用失败: ${res.status} ${res.statusText} ${errText}`);
+    }
+    const data: any = await res.json();
+    const content: string | undefined = data?.choices?.[0]?.message?.content;
+    if (!content) throw new Error('通义千问返回内容为空');
+    return content.trim();
+  };
+
+  const callWenxin = async (
+    apiKey: string,
+    prompt: string,
+    text: string
+  ): Promise<string> => {
+    const endpoint = (import.meta as any).env?.DEV
+      ? '/qianfan/v2/chat/completions'
+      : 'https://qianfan.baidubce.com/v2/chat/completions';
+
+    const body = {
+      model: 'ernie-3.5-8k',
+      messages: [
+        { role: 'user', content: `${prompt}\n\n${text}` },
+      ],
+      temperature: 0.3,
+    } as const;
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => '');
+      throw new Error(`文心一言调用失败: ${res.status} ${res.statusText} ${errText}`);
+    }
+    const data: any = await res.json();
+    const content: string | undefined = data?.result || data?.choices?.[0]?.message?.content;
+    if (!content) throw new Error('文心一言返回内容为空');
+    return content.trim();
   };
 
   return (

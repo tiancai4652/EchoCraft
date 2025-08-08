@@ -97,7 +97,7 @@ export function SettingsPanel({ settings, onSettingsChange, onClose }: SettingsP
         <div className="space-y-3">
           <Label>API密钥配置</Label>
           {settings.models.map((model) => (
-            <div key={model.id} className="space-y-1">
+            <div key={model.id} className="space-y-2">
               <Label className="text-sm text-gray-600">{model.name}</Label>
               <Input
                 type="password"
@@ -105,6 +105,7 @@ export function SettingsPanel({ settings, onSettingsChange, onClose }: SettingsP
                 value={model.apiKey || ''}
                 onChange={(e) => updateModel(model.id, { apiKey: e.target.value })}
               />
+              {/* 文心一言采用千帆 Bearer 单 Key 模式，无需 Secret */}
             </div>
           ))}
         </div>
