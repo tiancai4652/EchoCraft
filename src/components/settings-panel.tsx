@@ -100,10 +100,19 @@ export function SettingsPanel({ settings, onSettingsChange, onClose }: SettingsP
             <div key={model.id} className="space-y-2">
               <Label className="text-sm text-gray-600">{model.name}</Label>
               <Input
+                id={`api-key-${model.id}`}
+                name={`api-key-${model.id}`}
                 type="password"
                 placeholder={`输入${model.name}的API密钥`}
                 value={model.apiKey || ''}
                 onChange={(e) => updateModel(model.id, { apiKey: e.target.value })}
+                autoComplete="new-password"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                inputMode="text"
+                data-lpignore="true"
+                data-1p-ignore="true"
               />
               {/* 文心一言采用千帆 Bearer 单 Key 模式，无需 Secret */}
             </div>

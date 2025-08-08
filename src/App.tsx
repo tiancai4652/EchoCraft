@@ -47,13 +47,50 @@ const defaultSettings: AppSettings = {
   ]
 };
 
+const SETTINGS_STORAGE_KEY = 'echocraft_app_settings_v1';
+
 function App() {
   const [isRecording, setIsRecording] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+  const [settings, setSettings] = useState<AppSettings>(() => {
+    try {
+      const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (!raw) return defaultSettings;
+      const parsed = JSON.parse(raw) as AppSettings;
+      const merged: AppSettings = {
+        ...defaultSettings,
+        ...parsed,
+        models: defaultSettings.models.map((def) => {
+          const existing = parsed.models?.find((m) => m.id === def.id);
+          return { ...def, ...(existing || {}) };
+        }),
+      };
+      return merged;
+    } catch (err) {
+      console.warn('加载本地设置失败，将使用默认设置。', err);
+      return defaultSettings;
+    }
+  });
   const [originalText, setOriginalText] = useState('');
   const [polishedText, setPolishedText] = useState('');
   const [isPolishing, setIsPolishing] = useState(false);
+
+  // 申请持久化存储，避免浏览器在空间紧张时清理本地数据
+  useEffect(() => {
+    // @ts-ignore
+    if (navigator?.storage?.persist) {
+      // @ts-ignore
+      navigator.storage.persist().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    } catch (err) {
+      console.warn('保存本地设置失败。', err);
+    }
+  }, [settings]);
 
   // 监听全局快捷键
   useEffect(() => {
