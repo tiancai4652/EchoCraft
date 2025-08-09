@@ -20,6 +20,7 @@ export function VoiceRecorder({
   const [isSupported, setIsSupported] = useState(false);
   const [isRecognitionActive, setIsRecognitionActive] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const finalizedTranscriptRef = useRef<string>('');
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -33,19 +34,18 @@ export function VoiceRecorder({
       recognition.lang = 'zh-CN';
 
       recognition.onresult = (event: any) => {
-        let finalTranscript = '';
         let interimTranscript = '';
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
+          const piece = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
-            finalTranscript += transcript;
+            finalizedTranscriptRef.current += piece;
           } else {
-            interimTranscript += transcript;
+            interimTranscript += piece;
           }
         }
 
-        setTranscript(finalTranscript + interimTranscript);
+        setTranscript((finalizedTranscriptRef.current || '') + interimTranscript);
       };
 
       recognition.onerror = (event: any) => {
@@ -65,6 +65,7 @@ export function VoiceRecorder({
     if (isRecording && !isRecognitionActive) {
       try {
         setTranscript('');
+        finalizedTranscriptRef.current = '';
         setIsRecognitionActive(true);
         recognitionRef.current.start();
       } catch (error) {
